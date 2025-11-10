@@ -1,0 +1,65 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Poslati Mailovi{% endblock %}
+
+{% block content %}
+<div class="bg-white p-6 rounded-lg shadow-md">
+    <div class="flex justify-between items-center mb-4">
+        <h1 class="text-2xl font-bold text-gray-800">Poslati Mailovi</h1>
+        <form method="get" class="flex">
+            <input type="text" name="q" value="{{ request.GET.q }}" placeholder="Pretraga po primaocu ili naslovu" class="border rounded-l-md p-2">
+            <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-r-md">
+                Pretraži
+            </button>
+        </form>
+    </div>
+    <table class="min-w-full bg-white">
+        <thead>
+            <tr>
+                <th class="py-2 px-4 border-b">Primaoci</th>
+                <th class="py-2 px-4 border-b">Naslov</th>
+                <th class="py-2 px-4 border-b">Datum Slanja</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for mail in mailovi %}
+            <tr>
+                <td class="py-2 px-4 border-b">{{ mail.primaoci }}</td>
+                <td class="py-2 px-4 border-b">{{ mail.naslov }}</td>
+                <td class="py-2 px-4 border-b">{{ mail.datum_slanja|date:"d.m.Y H:i" }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="3" class="py-4 px-4 text-center text-gray-500">Nema poslatih mailova.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="mt-4">
+        {% if is_paginated %}
+            <ul class="flex justify-center">
+                {% if page_obj.has_previous %}
+                    <li><a href="?page={{ page_obj.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" class="px-3 py-1 border rounded-l-md hover:bg-gray-200">&laquo;</a></li>
+                {% else %}
+                    <li class="px-3 py-1 border rounded-l-md bg-gray-100 text-gray-400">&laquo;</li>
+                {% endif %}
+
+                {% for i in paginator.page_range %}
+                    {% if page_obj.number == i %}
+                        <li class="px-3 py-1 border bg-blue-500 text-white">{{ i }}</li>
+                    {% else %}
+                        <li><a href="?page={{ i }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" class="px-3 py-1 border hover:bg-gray-200">{{ i }}</a></li>
+                    {% endif %}
+                {% endfor %}
+
+                {% if page_obj.has_next %}
+                    <li><a href="?page={{ page_obj.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" class="px-3 py-1 border rounded-r-md hover:bg-gray-200">&raquo;</a></li>
+                {% else %}
+                    <li class="px-3 py-1 border rounded-r-md bg-gray-100 text-gray-400">&raquo;</li>
+                {% endif %}
+            </ul>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

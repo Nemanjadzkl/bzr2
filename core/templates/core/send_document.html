@@ -1,0 +1,16 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Pripremi za slanje - {{ dokument.naziv_dokumenta }}{% endblock %}
+
+{% block content %}
+<div class="bg-white p-6 rounded-lg shadow-md">
+    <h1 class="text-2xl font-bold text-gray-800 mb-4">Pripremi za slanje - {{ dokument.naziv_dokumenta }}</h1>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+            Pošalji i Arhiviraj
+        </button>
+    </form>
+</div>
+{% endblock %}

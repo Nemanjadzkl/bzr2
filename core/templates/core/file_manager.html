@@ -1,0 +1,41 @@
+{% extends 'core/base.html' %}
+
+{% block title %}File Manager - Master Templejti{% endblock %}
+
+{% block content %}
+<div class="bg-white p-6 rounded-lg shadow-md">
+    <div class="flex justify-between items-center mb-4">
+        <h1 class="text-2xl font-bold text-gray-800">File Manager - Master Templejti</h1>
+        <a href="{% url 'core:add_template' %}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+            Dodaj Templejt
+        </a>
+    </div>
+    <table class="min-w-full bg-white">
+        <thead>
+            <tr>
+                <th class="py-2 px-4 border-b">Naziv Dokumenta</th>
+                <th class="py-2 px-4 border-b">Tip Dokumenta</th>
+                <th class="py-2 px-4 border-b">Datum Kreiranja</th>
+                <th class="py-2 px-4 border-b">Akcije</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for dokument in dokumenti %}
+            <tr>
+                <td class="py-2 px-4 border-b">{{ dokument.naziv_dokumenta }}</td>
+                <td class="py-2 px-4 border-b">{{ dokument.tip_dokumenta.naziv }}</td>
+                <td class="py-2 px-4 border-b">{{ dokument.created_at|date:"d.m.Y H:i" }}</td>
+                <td class="py-2 px-4 border-b">
+                    <a href="{{ dokument.fajl.url }}" download class="text-blue-500 hover:underline mr-2">Preuzmi</a>
+                    <a href="{% url 'core:send_document' dokument.pk %}" class="text-green-500 hover:underline">Pripremi za slanje</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4" class="py-4 px-4 text-center text-gray-500">Nema dostupnih master templejta.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Dodaj Novi Master Templejt{% endblock %}
+
+{% block content %}
+<div class="bg-white p-6 rounded-lg shadow-md">
+    <h1 class="text-2xl font-bold text-gray-800 mb-4">Dodaj Novi Master Templejt</h1>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+            Sačuvaj
+        </button>
+    </form>
+</div>
+{% endblock %}

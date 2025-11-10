@@ -1,0 +1,79 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+    <div class="bg-white p-6 rounded-lg shadow-md">
+        <h2 class="text-xl font-bold text-gray-800">Aktivni Klijenti</h2>
+        <p class="text-3xl font-bold text-blue-500">{{ ukupan_broj_klijenata }}</p>
+    </div>
+    <div class="bg-white p-6 rounded-lg shadow-md">
+        <h2 class="text-xl font-bold text-gray-800">Poslati Mailovi (mesec)</h2>
+        <p class="text-3xl font-bold text-green-500">{{ poslati_mailovi_mesec }}</p>
+    </div>
+    <div class="bg-white p-6 rounded-lg shadow-md">
+        <h2 class="text-xl font-bold text-gray-800">Nadolazeći Rokovi</h2>
+        <p class="text-3xl font-bold text-yellow-500">{{ nadolazeci_rokovi_dokumenti.count }}</p>
+    </div>
+    <div class="bg-white p-6 rounded-lg shadow-md">
+        <h2 class="text-xl font-bold text-gray-800">Aktivne Inspekcije</h2>
+        <p class="text-3xl font-bold text-red-500">0</p>
+    </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div class="bg-white p-6 rounded-lg shadow-md">
+        <h2 class="text-xl font-bold text-gray-800 mb-4">Grafikon povreda na radu</h2>
+        <canvas id="povredeChart"></canvas>
+    </div>
+    <div class="bg-white p-6 rounded-lg shadow-md">
+        <h2 class="text-xl font-bold text-gray-800 mb-4">Hitno za obnoviti</h2>
+        <table class="min-w-full bg-white">
+            <thead>
+                <tr>
+                    <th class="py-2 px-4 border-b">Dokument</th>
+                    <th class="py-2 px-4 border-b">Klijent</th>
+                    <th class="py-2 px-4 border-b">Rok Važenja</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for doc in nadolazeci_rokovi_dokumenti %}
+                <tr>
+                    <td class="py-2 px-4 border-b">{{ doc.naziv }}</td>
+                    <td class="py-2 px-4 border-b">{{ doc.klijent.naziv }}</td>
+                    <td class="py-2 px-4 border-b">{{ doc.rok_vazenja|date:"d.m.Y" }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="3" class="py-4 px-4 text-center text-gray-500">Nema nadolazećih rokova.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const ctx = document.getElementById('povredeChart');
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Maj', 'Jun'],
+            datasets: [{
+                label: '# Broj povreda',
+                data: [0, 0, 0, 0, 0, 0], // Dummy data
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}

@@ -1,11 +1,22 @@
 <!DOCTYPE html>
-<html lang="sr">
+<html lang="sr" x-data="{ darkMode: localStorage.getItem('darkMode') === 'true' }" :class="{ 'dark': darkMode }">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}BZR Upravljački Portal{% endblock %}</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <style>
+        .dark .bg-white { background-color: #1f2937; }
+        .dark .bg-gray-100 { background-color: #111827; }
+        .dark .text-gray-800 { color: #f9fafb; }
+        .dark .text-gray-700 { color: #d1d5db; }
+        .dark .text-gray-600 { color: #9ca3af; }
+        .dark .text-gray-500 { color: #6b7280; }
+        .dark .border-b { border-color: #374151; }
+        .dark .shadow-md { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); }
+    </style>
 </head>
 <body class="bg-gray-100">
     <nav class="bg-white shadow-md">
@@ -13,21 +24,14 @@
             <div class="flex justify-between h-16">
                 <div class="flex">
                     <div class="flex-shrink-0 flex items-center">
-                        <a href="{% url 'core:file_manager' %}" class="text-xl font-bold text-gray-800">BZR Portal</a>
-                    </div>
-                    <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
-                        <a href="{% url 'core:file_manager' %}" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
-                            File Manager
-                        </a>
-                        <a href="{% url 'core:klijent_list' %}" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
-                            Klijenti
-                        </a>
-                        <a href="{% url 'core:poslati_mail_list' %}" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
-                            Poslati Mailovi
-                        </a>
+                        <a href="{% url 'core:dashboard' %}" class="text-xl font-bold text-gray-800">BZR Portal</a>
                     </div>
                 </div>
                 <div class="flex items-center">
+                    <button @click="darkMode = !darkMode; localStorage.setItem('darkMode', darkMode)" aria-label="Toggle Dark Mode" class="mr-4 p-2 rounded-full text-gray-500 hover:bg-gray-200 dark:hover:bg-gray-700">
+                        <svg x-show="!darkMode" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                        <svg x-show="darkMode" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                    </button>
                     <a href="{% url 'core:smtp_settings' %}" class="text-gray-500 hover:text-gray-700 mr-4">Podešavanja</a>
                     <a href="/admin/" class="text-gray-500 hover:text-gray-700">Admin Panel</a>
                 </div>
@@ -35,8 +39,47 @@
         </div>
     </nav>
     <main class="py-10">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            {% block content %}{% endblock %}
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex">
+            <aside class="w-64 mr-8">
+                <nav class="space-y-1" x-data="{ open: '' }">
+                    <a href="{% url 'core:dashboard' %}" class="flex items-center px-2 py-2 text-sm font-medium text-gray-700 rounded-md hover:bg-gray-200">🏠 Dashboard</a>
+
+                    <div x-data="{ open: false }">
+                        <button @click="open = !open" class="w-full flex justify-between items-center px-2 py-2 text-sm font-medium text-gray-700 rounded-md hover:bg-gray-200">
+                            <span>👥 Klijenti</span>
+                            <svg :class="{'transform rotate-180': open}" class="w-5 h-5 transition-transform" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
+                        </button>
+                        <div x-show="open" class="pl-4 mt-1 space-y-1">
+                            <a href="{% url 'core:klijent_list' %}" class="block px-2 py-2 text-sm font-medium text-gray-600 rounded-md hover:bg-gray-200">Lista klijenata</a>
+                        </div>
+                    </div>
+
+                    <div x-data="{ open: false }">
+                        <button @click="open = !open" class="w-full flex justify-between items-center px-2 py-2 text-sm font-medium text-gray-700 rounded-md hover:bg-gray-200">
+                            <span>📄 Dokumentacija</span>
+                            <svg :class="{'transform rotate-180': open}" class="w-5 h-5 transition-transform" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
+                        </button>
+                        <div x-show="open" class="pl-4 mt-1 space-y-1">
+                            <a href="{% url 'core:file_manager' %}" class="block px-2 py-2 text-sm font-medium text-gray-600 rounded-md hover:bg-gray-200">Master Templejti</a>
+                        </div>
+                    </div>
+
+                    <div x-data="{ open: false }">
+                        <button @click="open = !open" class="w-full flex justify-between items-center px-2 py-2 text-sm font-medium text-gray-700 rounded-md hover:bg-gray-200">
+                            <span>📧 Email</span>
+                            <svg :class="{'transform rotate-180': open}" class="w-5 h-5 transition-transform" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
+                        </button>
+                        <div x-show="open" class="pl-4 mt-1 space-y-1">
+                            <a href="{% url 'core:poslati_mail_list' %}" class="block px-2 py-2 text-sm font-medium text-gray-600 rounded-md hover:bg-gray-200">Poslati mailovi</a>
+                            <a href="{% url 'core:email_templejt_list' %}" class="block px-2 py-2 text-sm font-medium text-gray-600 rounded-md hover:bg-gray-200">Templejti</a>
+                        </div>
+                    </div>
+
+                </nav>
+            </aside>
+            <div class="flex-1">
+                {% block content %}{% endblock %}
+            </div>
         </div>
     </main>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
